@@ -3,6 +3,7 @@ package test.thejudemo.moviecatalogservice.resource;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.utils.FallbackMethod;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import test.thejudemo.moviecatalogservice.config.DBConfig;
 import test.thejudemo.moviecatalogservice.entity.CatalogItem;
 import test.thejudemo.moviecatalogservice.entity.CatalogRatings;
 import test.thejudemo.moviecatalogservice.entity.MovieDetails;
@@ -18,6 +20,7 @@ import test.thejudemo.moviecatalogservice.services.UserRating;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,6 +37,26 @@ public class CatalogController {
 
     @Autowired
     UserRating userRating;
+
+    @Value("${my.greeting: default}")
+    private String greeting;
+
+    @Value("${my.greetingDate}")
+    private String greetingDate;
+
+    @Value("${my.greetingList}")
+    private List<String> greetingList;
+
+    @Value("#{${db.details}}")
+    private Map<String,String> dbDetails;
+
+
+    @Autowired
+    public DBConfig dbConfig;
+
+    public CatalogController() {
+    }
+
 
     @RequestMapping("/{userId}")
     //@HystrixCommand(fallbackMethod = "getFallbackMovieCatalogDetails")
@@ -76,6 +99,15 @@ public class CatalogController {
            movieInfo.getCatalogDetails(getMovieRatings)
         ).collect(Collectors.toList());
 
+    }
+
+
+    // API Call to test @Value, @Configuration & @ Environment
+    @RequestMapping("/greetings")
+    public String getGreetings ()
+    {
+        return greeting + greetingDate + greetingList + dbConfig.getAddress() + dbConfig.getHost() + dbConfig.getPort()
+                + dbDetails;
     }
 
 }
