@@ -1,7 +1,7 @@
 spring.application.name : movie-catalog-service
 
 my:
-  greeting : Siva Theja Test Greeting
+  greeting : Siva Theja DEV Profile Test Greeting
   greetingDate : January 2021
   greetingList : Test1 , Test2, Test3
 
@@ -14,8 +14,3 @@ db:
 management.endpoints.web.exposure.include : "*"
 
 server.port : 9091
-
-spring.profiles.active : dev
-
-
-
