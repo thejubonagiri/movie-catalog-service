@@ -4,7 +4,9 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.utils.FallbackMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +29,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/catalog")
 @EnableHystrix
 @EnableHystrixDashboard
+@EnableAutoConfiguration
+@RefreshScope
 public class CatalogController {
 
     @Autowired
@@ -38,7 +42,7 @@ public class CatalogController {
     @Autowired
     UserRating userRating;
 
-    @Value("${my.greeting: default}")
+    @Value("${my.greeting}")
     private String greeting;
 
     @Value("${my.greetingDate}")
@@ -47,15 +51,8 @@ public class CatalogController {
     @Value("${my.greetingList}")
     private List<String> greetingList;
 
-    @Value("#{${db.details}}")
-    private Map<String,String> dbDetails;
-
-
-    @Autowired
+        @Autowired
     public DBConfig dbConfig;
-
-    public CatalogController() {
-    }
 
 
     @RequestMapping("/{userId}")
@@ -106,8 +103,7 @@ public class CatalogController {
     @RequestMapping("/greetings")
     public String getGreetings ()
     {
-        return greeting + greetingDate + greetingList + dbConfig.getAddress() + dbConfig.getHost() + dbConfig.getPort()
-                + dbDetails;
+        return greeting + greetingDate + greetingList + dbConfig.getAddress() + dbConfig.getHost() + " port: " + dbConfig.getPort();
     }
 
 }
